@@ -13,7 +13,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -24,6 +23,7 @@ import team.creative.littletiles.common.block.LittleBlockRegistry;
 import team.creative.littletiles.common.block.TETiles;
 import team.creative.littletiles.common.grid.LittleGrid;
 import team.creative.littletiles.common.math.box.LittleBox;
+import team.creative.littletiles.common.math.LittlePlacementMath;
 import team.creative.littletiles.common.tile.LittleTile;
 
 public class ItemLittleChisel extends Item {
@@ -83,22 +83,16 @@ public class ItemLittleChisel extends Item {
         BlockPos clickedPos = context.getClickedPos();
         Direction face = context.getClickedFace();
         Vector3d hit = context.getClickLocation();
-        double localX = hit.x - clickedPos.getX() + face.getStepX() * 1.0E-7D;
-        double localY = hit.y - clickedPos.getY() + face.getStepY() * 1.0E-7D;
-        double localZ = hit.z - clickedPos.getZ() + face.getStepZ() * 1.0E-7D;
-        BlockPos targetPos = clickedPos;
-        if (localX < 0 || localX >= 1 || localY < 0 || localY >= 1 || localZ < 0 || localZ >= 1)
-            targetPos = clickedPos.relative(face);
+        BlockPos targetPos = LittlePlacementMath.outwardBlock(clickedPos, hit, face);
+
         if (!context.getPlayer().mayUseItemAt(targetPos, face, chisel))
             return ActionResultType.FAIL;
 
         World level = context.getLevel();
         TileEntity existing = level.getBlockEntity(targetPos);
         LittleGrid grid = existing instanceof TETiles ? ((TETiles) existing).getGrid() : clickedTiles.getGrid();
-        int cellX = MathHelper.clamp((int) Math.floor((hit.x - targetPos.getX() + face.getStepX() * 1.0E-7D) * grid.count), 0, grid.count - 1);
-        int cellY = MathHelper.clamp((int) Math.floor((hit.y - targetPos.getY() + face.getStepY() * 1.0E-7D) * grid.count), 0, grid.count - 1);
-        int cellZ = MathHelper.clamp((int) Math.floor((hit.z - targetPos.getZ() + face.getStepZ() * 1.0E-7D) * grid.count), 0, grid.count - 1);
-        LittleBox cell = new LittleBox(cellX, cellY, cellZ, cellX + 1, cellY + 1, cellZ + 1);
+        LittleBox cell = LittlePlacementMath.cell(targetPos, hit, face, grid, false);
+
 
         if (existing instanceof TETiles)
             for (LittleTile tile : ((TETiles) existing).getTiles())

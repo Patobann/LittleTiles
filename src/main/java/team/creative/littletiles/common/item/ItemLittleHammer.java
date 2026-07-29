@@ -8,14 +8,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import team.creative.littletiles.common.block.TETiles;
 import team.creative.littletiles.common.grid.LittleGrid;
 import team.creative.littletiles.common.math.box.LittleBox;
+import team.creative.littletiles.common.math.LittlePlacementMath;
 import team.creative.littletiles.common.math.box.LittleBoxReturnedVolume;
 import team.creative.littletiles.common.tile.LittleTile;
 
@@ -38,7 +36,7 @@ public class ItemLittleHammer extends Item {
 
         TETiles blockEntity = (TETiles) level.getBlockEntity(pos);
         LittleGrid grid = blockEntity.getGrid();
-        LittleBox cut = clickedCell(context, grid);
+        LittleBox cut = LittlePlacementMath.cell(pos, context.getClickLocation(), context.getClickedFace(), grid, true);
         List<LittleTile> snapshot = new ArrayList<>();
         blockEntity.getTiles().forEach(snapshot::add);
         for (LittleTile tile : snapshot) {
@@ -59,18 +57,5 @@ public class ItemLittleHammer extends Item {
             return ActionResultType.CONSUME;
         }
         return ActionResultType.PASS;
-    }
-
-    private static LittleBox clickedCell(ItemUseContext context, LittleGrid grid) {
-        BlockPos pos = context.getClickedPos();
-        Vector3d hit = context.getClickLocation();
-        Direction face = context.getClickedFace();
-        double x = hit.x - pos.getX() - face.getStepX() * 1.0E-7D;
-        double y = hit.y - pos.getY() - face.getStepY() * 1.0E-7D;
-        double z = hit.z - pos.getZ() - face.getStepZ() * 1.0E-7D;
-        int cellX = MathHelper.clamp((int) Math.floor(x * grid.count), 0, grid.count - 1);
-        int cellY = MathHelper.clamp((int) Math.floor(y * grid.count), 0, grid.count - 1);
-        int cellZ = MathHelper.clamp((int) Math.floor(z * grid.count), 0, grid.count - 1);
-        return new LittleBox(cellX, cellY, cellZ, cellX + 1, cellY + 1, cellZ + 1);
     }
 }

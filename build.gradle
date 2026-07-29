@@ -83,6 +83,7 @@ sourceSets {
             include 'team/creative/littletiles/common/item/ItemLittleHammer.java'
             include 'team/creative/littletiles/common/item/ItemLittleBag.java'
             include 'team/creative/littletiles/common/math/LittleUtils.java'
+            include 'team/creative/littletiles/common/math/LittlePlacementMath.java'
             include 'team/creative/littletiles/common/math/vec/LittleVec.java'
             include 'team/creative/littletiles/common/math/vec/SplitRangeBoxes.java'
             include 'team/creative/littletiles/common/math/box/LittleBox.java'

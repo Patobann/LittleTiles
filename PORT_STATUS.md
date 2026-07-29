@@ -17,7 +17,7 @@ Verified on Java 8 (Temurin 8u492):
 - The runtime log contains `LittleTiles 1.16.5 port bootstrap loaded`.
 - Grid, vector, box, element, tile, and tile-collection cores compile as active
   1.16 code.
-- Twelve focused tests cover grid/vector coordinates plus box splitting,
+- Sixteen focused tests cover grid/vector coordinates plus box splitting,
   combining, clipping, ray tracing, volume accounting, and current/legacy NBT.
 - The Forge runtime smoke-test verifies full `BlockState` properties, element/tile/
   collection NBT, box combination, registry creation, grid conversion, and block
