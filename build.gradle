@@ -69,6 +69,10 @@ sourceSets {
             include 'team/creative/littletiles/common/grid/**'
             include 'team/creative/littletiles/common/math/LittleUtils.java'
             include 'team/creative/littletiles/common/math/vec/LittleVec.java'
+            include 'team/creative/littletiles/common/math/vec/SplitRangeBoxes.java'
+            include 'team/creative/littletiles/common/math/box/LittleBox.java'
+            include 'team/creative/littletiles/common/math/box/LittleBoxReturnedVolume.java'
+            include 'team/creative/littletiles/common/tile/BasicCombiner.java'
             include 'com/sun/javafx/geom/transform/SingularMatrixException.java'
         }
         resources {

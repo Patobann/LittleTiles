@@ -6,7 +6,7 @@ The complete 1.12.2 source tree is intentionally preserved as the functional
 reference. The unfinished 1.16 source tree is enabled package-by-package so a
 broken subsystem cannot hide the state of the working runtime.
 
-## Current milestone: runtime bootstrap
+## Current milestone: math foundation
 
 Verified on Java 8 (Temurin 8u492):
 
@@ -15,8 +15,10 @@ Verified on Java 8 (Temurin 8u492):
 - CreativeCore `archive/1.16` loads from the pinned submodule.
 - Forge constructs the LittleTiles mod entrypoint.
 - The runtime log contains `LittleTiles 1.16.5 port bootstrap loaded`.
-- `LittleGrid`, `IGridBased`, `LittleUtils`, and `LittleVec` compile as
-  active 1.16 code and pass focused coordinate/NBT tests.
+- `LittleGrid`, `IGridBased`, `LittleUtils`, `LittleVec`, `LittleBox`,
+  `LittleBoxReturnedVolume`, and `BasicCombiner` compile as active 1.16 code.
+- Twelve focused tests cover grid/vector coordinates plus box splitting,
+  combining, clipping, ray tracing, volume accounting, and current/legacy NBT.
 
 This milestone deliberately registers no LittleTiles blocks, items, tile
 entities, packets, screens, or renderers yet. It proves the build, mappings,
@@ -50,7 +52,7 @@ gradlew runData
 | Stage | Subsystem | State |
 | --- | --- | --- |
 | 0 | Forge workspace, metadata, CreativeCore, mod entrypoint | Working |
-| 1 | Grid and math primitives (`LittleGrid`, vectors, boxes) | In progress: grid/vector working; boxes next |
+| 1 | Grid and math primitives (`LittleGrid`, vectors, boxes) | In progress: base boxes working; transformable boxes and face adapters next |
 | 2 | Little block/material registry and tile serialization | Not started |
 | 3 | LittleTiles block entity, NBT save/load, block registration | Not started |
 | 4 | Placement, removal, collision, selection, networking | Not started |
@@ -67,8 +69,13 @@ package, rather than isolated name changes. Six syntax blockers in the draft
 have already been repaired, but those files remain outside the bootstrap source
 set until their dependency layer is ported.
 
-The grid/vector tests cover default grid initialization, coordinate conversion,
-negative block offsets, minimum-grid selection, equality, and NBT round-trips.
+The grid/vector/box tests cover default grid initialization, coordinate conversion,
+negative block offsets, minimum-grid selection, equality, block-boundary splits,
+box combining and cutouts, ray hits, volume accounting, and NBT round-trips.
+
+Legacy slice payloads currently load as their bounding boxes, matching the modern
+crash-safe migration behavior. Transformable-box payloads, face slicing, and client
+render-box generation remain disabled until their dependency layer is ported.
 
 No feature should be marked working merely because it compiles. Each stage must
 add focused serialization/math tests plus a Forge runtime smoke test before the
