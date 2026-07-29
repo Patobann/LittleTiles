@@ -29,6 +29,8 @@ renderer draws each base `LittleBox` with its stored vanilla `BlockState`.
 Per-element tinting, internal-face culling, full placement modes, packets, screens,
 and most tools are not restored yet. The first chisel interaction converts a safe
 vanilla block into a full-size little tile while preserving its `BlockState`.
+The first creative-only hammer interaction removes one grid cell without damaging
+the remaining boxes; survival cutout waits for fractional ingredient storage.
 
 ## Source policy
 
@@ -62,7 +64,7 @@ gradlew runData
 | 2 | Little block/material registry and tile serialization | Working for base boxes: state, color, multi-box tile, collection NBT |
 | 3 | LittleTiles block entity, NBT save/load, block registration | In progress: block/item/type registered and persistent; world behavior next |
 | 4 | Placement, removal, collision, selection, networking | In progress: tile-derived selection/collision and vanilla block-entity sync working |
-| 5 | Client rendering and basic tools | In progress: base boxes render and the chisel converts vanilla blocks; shapes, tinting, culling, and remaining tools next |
+| 5 | Client rendering and basic tools | In progress: base boxes render; chisel conversion and creative one-cell hammer cutout work |
 | 6 | Blueprints, GUI, undo/redo | Not started |
 | 7 | Structures, doors, animations, lifts | Not started |
 | 8 | Signals, multiplayer hardening, integrations, optimization | Not started |

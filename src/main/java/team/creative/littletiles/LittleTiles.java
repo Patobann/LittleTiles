@@ -29,6 +29,7 @@ import team.creative.littletiles.common.block.LittleBlockRegistry;
 import team.creative.littletiles.common.block.TETiles;
 import team.creative.littletiles.common.grid.LittleGrid;
 import team.creative.littletiles.common.item.ItemLittleChisel;
+import team.creative.littletiles.common.item.ItemLittleHammer;
 import team.creative.littletiles.common.math.box.LittleBox;
 import team.creative.littletiles.common.tile.LittleCollection;
 import team.creative.littletiles.common.tile.LittleElement;
@@ -47,6 +48,8 @@ public class LittleTiles {
     public static final RegistryObject<Block> TILES_BLOCK = BLOCKS.register("tiles", BlockTiles::new);
     public static final RegistryObject<Item> CHISEL_ITEM = ITEMS.register("chisel",
             () -> new ItemLittleChisel(new Item.Properties().stacksTo(1).tab(ItemGroup.TAB_TOOLS)));
+    public static final RegistryObject<Item> HAMMER_ITEM = ITEMS.register("hammer",
+            () -> new ItemLittleHammer(new Item.Properties().stacksTo(1).tab(ItemGroup.TAB_TOOLS)));
     public static final RegistryObject<Item> TILES_ITEM = ITEMS.register("tiles",
             () -> new BlockItem(TILES_BLOCK.get(), new Item.Properties().tab(ItemGroup.TAB_BUILDING_BLOCKS)));
     public static final RegistryObject<TileEntityType<TETiles>> TILES_TE_TYPE = TILE_ENTITIES.register("tiles",

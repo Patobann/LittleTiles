@@ -80,6 +80,7 @@ sourceSets {
             include 'team/creative/littletiles/common/tile/LittleCollectionSafe.java'
             include 'team/creative/littletiles/common/grid/**'
             include 'team/creative/littletiles/common/item/ItemLittleChisel.java'
+            include 'team/creative/littletiles/common/item/ItemLittleHammer.java'
             include 'team/creative/littletiles/common/math/LittleUtils.java'
             include 'team/creative/littletiles/common/math/vec/LittleVec.java'
             include 'team/creative/littletiles/common/math/vec/SplitRangeBoxes.java'
