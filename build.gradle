@@ -68,6 +68,7 @@ sourceSets {
             include 'team/creative/littletiles/LittleTiles.java'
             include 'team/creative/littletiles/client/LittleTilesClient.java'
             include 'team/creative/littletiles/client/render/TilesRenderer.java'
+            include 'team/creative/littletiles/client/render/ColorVertexBuilder.java'
             include 'team/creative/littletiles/common/api/block/LittleBlock.java'
             include 'team/creative/littletiles/common/block/LittleBlockRegistry.java'
             include 'team/creative/littletiles/common/block/LittleMCBlock.java'

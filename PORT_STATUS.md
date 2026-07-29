@@ -19,7 +19,7 @@ Verified on Java 8 (Temurin 8u492):
 - The runtime log contains `LittleTiles 1.16.5 port bootstrap loaded`.
 - Grid, vector, box, element, tile, and tile-collection cores compile as active
   1.16 code.
-- Sixteen focused tests cover grid/vector coordinates plus box splitting,
+- Nineteen focused tests cover grid/vector coordinates plus box splitting,
   combining, clipping, ray tracing, volume accounting, and current/legacy NBT.
 - The Forge runtime smoke-test verifies full `BlockState` properties, element/tile/
   collection NBT, box combination, registry creation, grid conversion, and block
@@ -27,8 +27,9 @@ Verified on Java 8 (Temurin 8u492):
 
 The `littletiles:tiles` block, item, and block entity are registered and have
 minimal item models, language entries, and a loot table. A client block-entity
-renderer draws each base `LittleBox` with its stored vanilla `BlockState`.
-Per-element tinting, internal-face culling, full placement modes, packets, screens,
+renderer draws each base `LittleBox` with its stored vanilla `BlockState` and ARGB
+tint.
+Correct per-face UV mapping, internal-face culling, full placement modes, packets, screens,
 and most tools are not restored yet. The first chisel interaction converts a safe
 vanilla block into a full-size little tile while preserving its `BlockState`.
 The hammer removes one grid cell without damaging the remaining boxes. In survival,
@@ -68,7 +69,7 @@ gradlew runData
 | 2 | Little block/material registry and tile serialization | Working for base boxes: state, color, multi-box tile, collection NBT |
 | 3 | LittleTiles block entity, NBT save/load, block registration | In progress: block/item/type registered and persistent; world behavior next |
 | 4 | Placement, removal, collision, selection, networking | In progress: one-cell survival placement/removal, tile-derived shapes, and vanilla sync working |
-| 5 | Client rendering and basic tools | In progress: base boxes render; chisel conversion and creative one-cell hammer cutout work |
+| 5 | Client rendering and basic tools | In progress: BlockState boxes and ARGB tint render; chisel/hammer edit one cell |
 | 6 | Blueprints, GUI, undo/redo | Not started |
 | 7 | Structures, doors, animations, lifts | Not started |
 | 8 | Signals, multiplayer hardening, integrations, optimization | Not started |
