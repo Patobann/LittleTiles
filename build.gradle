@@ -89,6 +89,7 @@ sourceSets {
             include 'team/creative/littletiles/common/math/vec/SplitRangeBoxes.java'
             include 'team/creative/littletiles/common/math/box/LittleBox.java'
             include 'team/creative/littletiles/common/math/box/LittleBoxReturnedVolume.java'
+            include 'team/creative/littletiles/common/math/box/LittleFaceCulling.java'
             include 'team/creative/littletiles/common/tile/BasicCombiner.java'
             include 'com/sun/javafx/geom/transform/SingularMatrixException.java'
         }
