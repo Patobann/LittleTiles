@@ -6,7 +6,7 @@ The complete 1.12.2 source tree is intentionally preserved as the functional
 reference. The unfinished 1.16 source tree is enabled package-by-package so a
 broken subsystem cannot hide the state of the working runtime.
 
-## Current milestone: math foundation
+## Current milestone: persistent tile foundation
 
 Verified on Java 8 (Temurin 8u492):
 
@@ -15,16 +15,18 @@ Verified on Java 8 (Temurin 8u492):
 - CreativeCore `archive/1.16` loads from the pinned submodule.
 - Forge constructs the LittleTiles mod entrypoint.
 - The runtime log contains `LittleTiles 1.16.5 port bootstrap loaded`.
-- `LittleGrid`, `IGridBased`, `LittleUtils`, `LittleVec`, `LittleBox`,
-  `LittleBoxReturnedVolume`, and `BasicCombiner` compile as active 1.16 code.
+- Grid, vector, box, element, tile, and tile-collection cores compile as active
+  1.16 code.
 - Twelve focused tests cover grid/vector coordinates plus box splitting,
   combining, clipping, ray tracing, volume accounting, and current/legacy NBT.
-- The Forge runtime smoke-test verifies full `BlockState` property serialization
-  and `LittleElement` color/NBT round-tripping.
+- The Forge runtime smoke-test verifies full `BlockState` properties, element/tile/
+  collection NBT, box combination, registry creation, grid conversion, and block
+  entity persistence.
 
-This milestone deliberately registers no LittleTiles blocks, items, tile
-entities, packets, screens, or renderers yet. It proves the build, mappings,
-dependency, metadata, and mod-loading path before gameplay code is restored.
+The `littletiles:tiles` block, item, and block entity are registered and have
+minimal models, language entries, and a loot table. Dynamic little-tile rendering,
+interaction, packets, screens, and tools are not restored yet; the block currently
+uses a full-cube stone placeholder model.
 
 ## Source policy
 
@@ -55,8 +57,8 @@ gradlew runData
 | --- | --- | --- |
 | 0 | Forge workspace, metadata, CreativeCore, mod entrypoint | Working |
 | 1 | Grid and math primitives (`LittleGrid`, vectors, boxes) | In progress: base boxes working; transformable boxes and face adapters next |
-| 2 | Little block/material registry and tile serialization | In progress: block-state registry and `LittleElement` NBT working |
-| 3 | LittleTiles block entity, NBT save/load, block registration | Not started |
+| 2 | Little block/material registry and tile serialization | Working for base boxes: state, color, multi-box tile, collection NBT |
+| 3 | LittleTiles block entity, NBT save/load, block registration | In progress: block/item/type registered and persistent; world behavior next |
 | 4 | Placement, removal, collision, selection, networking | Not started |
 | 5 | Client rendering and basic tools | Not started |
 | 6 | Blueprints, GUI, undo/redo | Not started |
