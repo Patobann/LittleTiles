@@ -21,7 +21,7 @@ Verified on Java 8 (Temurin 8u492):
   combining, clipping, ray tracing, volume accounting, and current/legacy NBT.
 - The Forge runtime smoke-test verifies full `BlockState` properties, element/tile/
   collection NBT, box combination, registry creation, grid conversion, and block
-  entity persistence.
+  entity persistence, half-block voxel shape generation, and client update NBT.
 
 The `littletiles:tiles` block, item, and block entity are registered and have
 minimal models, language entries, and a loot table. Dynamic little-tile rendering,
@@ -59,7 +59,7 @@ gradlew runData
 | 1 | Grid and math primitives (`LittleGrid`, vectors, boxes) | In progress: base boxes working; transformable boxes and face adapters next |
 | 2 | Little block/material registry and tile serialization | Working for base boxes: state, color, multi-box tile, collection NBT |
 | 3 | LittleTiles block entity, NBT save/load, block registration | In progress: block/item/type registered and persistent; world behavior next |
-| 4 | Placement, removal, collision, selection, networking | Not started |
+| 4 | Placement, removal, collision, selection, networking | In progress: tile-derived selection/collision and vanilla block-entity sync working |
 | 5 | Client rendering and basic tools | Not started |
 | 6 | Blueprints, GUI, undo/redo | Not started |
 | 7 | Structures, doors, animations, lifts | Not started |

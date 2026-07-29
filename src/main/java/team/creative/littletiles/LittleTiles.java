@@ -15,6 +15,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -108,14 +109,17 @@ public class LittleTiles {
     private void verifyBlockEntityCodec() {
             LittleElement element = new LittleElement(Blocks.STONE.defaultBlockState(), -1);
             TETiles original = new TETiles();
-            original.getTiles().add(new LittleTile(element, new LittleBox(0, 0, 0, 16, 16, 16)));
+            original.getTiles().add(new LittleTile(element, new LittleBox(0, 0, 0, 8, 16, 16)));
             original.convertTo(LittleGrid.get(32));
 
             CompoundNBT saved = original.save(new CompoundNBT());
             TETiles loaded = new TETiles();
             loaded.load(TILES_BLOCK.get().defaultBlockState(), saved);
-            if (loaded.getGrid() != LittleGrid.get(32) || loaded.getTiles().size() != 1 || loaded.getTiles().getVolume() != 32768)
+            if (loaded.getGrid() != LittleGrid.get(32) || loaded.getTiles().size() != 1 || loaded.getTiles().getVolume() != 16384)
                 throw new IllegalStateException("LittleTiles block entity NBT codec failed");
+            VoxelShape shape = BlockTiles.createShape(loaded.getGrid(), loaded.getTiles());
+            if (shape.isEmpty() || shape.bounds().minX != 0 || shape.bounds().maxX != 0.5D || shape.bounds().maxY != 1 || shape.bounds().maxZ != 1)
+                throw new IllegalStateException("LittleTiles voxel shape generation failed");
             LOGGER.info("LittleTiles block entity registered and NBT-verified");
     }
 }
