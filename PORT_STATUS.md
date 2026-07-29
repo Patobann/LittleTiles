@@ -24,9 +24,10 @@ Verified on Java 8 (Temurin 8u492):
   entity persistence, half-block voxel shape generation, and client update NBT.
 
 The `littletiles:tiles` block, item, and block entity are registered and have
-minimal models, language entries, and a loot table. Dynamic little-tile rendering,
-interaction, packets, screens, and tools are not restored yet; the block currently
-uses a full-cube stone placeholder model.
+minimal item models, language entries, and a loot table. A client block-entity
+renderer draws each base `LittleBox` with its stored vanilla `BlockState`.
+Per-element tinting, internal-face culling, interaction, packets, screens, and
+tools are not restored yet.
 
 ## Source policy
 
@@ -60,7 +61,7 @@ gradlew runData
 | 2 | Little block/material registry and tile serialization | Working for base boxes: state, color, multi-box tile, collection NBT |
 | 3 | LittleTiles block entity, NBT save/load, block registration | In progress: block/item/type registered and persistent; world behavior next |
 | 4 | Placement, removal, collision, selection, networking | In progress: tile-derived selection/collision and vanilla block-entity sync working |
-| 5 | Client rendering and basic tools | Not started |
+| 5 | Client rendering and basic tools | In progress: base boxes render their stored block-state model; tinting, culling, and tools next |
 | 6 | Blueprints, GUI, undo/redo | Not started |
 | 7 | Structures, doors, animations, lifts | Not started |
 | 8 | Signals, multiplayer hardening, integrations, optimization | Not started |
