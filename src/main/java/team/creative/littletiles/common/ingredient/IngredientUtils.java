@@ -27,7 +27,7 @@ public class IngredientUtils {
         Block block = Block.getBlockFromName(nbt.getString("block"));
         if (block == null || block instanceof AirBlock)
             return null;
-        if (nbt.getDouble("volume") > 0)asdas
+        if (nbt.getDouble("volume") > 0)
             return new BlockIngredientEntry(block, nbt.getInt("meta"), nbt.getDouble("volume"));
         return null;
     }

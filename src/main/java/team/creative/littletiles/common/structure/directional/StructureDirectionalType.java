@@ -59,7 +59,7 @@ public abstract class StructureDirectionalType<T> {
             
             @Override
             public Facing flip(Facing value, LittleGrid context, Axis axis, LittleVec doubledCenter) {
-                return Mirror
+                return value.axis.toVanilla() == axis ? value.opposite() : value;
             }
             
             @Override

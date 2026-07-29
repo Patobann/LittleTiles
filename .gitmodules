@@ -1,0 +1,3 @@
+[submodule "dependencies/CreativeCore"]
+	path = dependencies/CreativeCore
+	url = https://github.com/CreativeMD/CreativeCore.git

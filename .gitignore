@@ -1,0 +1,12 @@
+.gradle/
+build/
+run/
+out/
+graphify-out/
+
+# Local bootstrap tooling and IDE state.
+.tooling/
+.idea/
+*.iml
+*.ipr
+*.iws

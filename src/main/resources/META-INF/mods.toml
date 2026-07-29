@@ -1,0 +1,41 @@
+modLoader="javafml"
+loaderVersion="[36,)"
+license="GNU General Public License v3.0"
+issueTrackerURL="https://github.com/CreativeMD/LittleTiles/issues"
+
+[[mods]]
+modId="creativecore"
+version="2.0.0-1.16"
+displayName="CreativeCore"
+displayURL="https://github.com/CreativeMD/CreativeCore"
+authors="CreativeMD"
+description='''Shared runtime used by LittleTiles.'''
+
+[[mods]]
+modId="littletiles"
+version="${file.jarVersion}"
+displayName="LittleTiles"
+displayURL="https://github.com/CreativeMD/LittleTiles"
+authors="CreativeMD, Shana"
+description='''#BuildItYourself'''
+
+[[dependencies.littletiles]]
+modId="forge"
+mandatory=true
+versionRange="[36.2.0,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.littletiles]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.16.5,1.17)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.littletiles]]
+modId="creativecore"
+mandatory=true
+versionRange="[2.0.0,)"
+ordering="AFTER"
+side="BOTH"

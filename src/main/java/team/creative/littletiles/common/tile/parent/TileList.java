@@ -14,7 +14,7 @@ import team.creative.littletiles.common.structure.LittleStructureAttribute;
 import team.creative.littletiles.common.structure.exception.CorruptedConnectionException;
 import team.creative.littletiles.common.structure.exception.CorruptedLinkException;
 
-public class NoneStructureCollection extends ParentCollection {
+public class TileList extends ParentCollection {
     
     public TileEntityLittleTiles te;
     

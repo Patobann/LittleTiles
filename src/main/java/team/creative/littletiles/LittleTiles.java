@@ -1,12 +1,18 @@
 package team.creative.littletiles;
 
-import net.minecraft.tileentity.TileEntityType;
-import team.creative.littletiles.common.block.TETiles;
-import team.creative.littletiles.common.config.LittleTilesConfig;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import net.minecraftforge.fml.common.Mod;
+
+@Mod(LittleTiles.MODID)
 public class LittleTiles {
     
-    public static TileEntityType<TETiles> TILES_TE_TYPE;
-    public static LittleTilesConfig CONFIG;
+    public static final String MODID = "littletiles";
+    public static final Logger LOGGER = LogManager.getLogger(MODID);
+
+    public LittleTiles() {
+        LOGGER.info("LittleTiles 1.16.5 port bootstrap loaded");
+    }
     
 }

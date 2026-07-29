@@ -1,0 +1,103 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
+
+version = '0.0.1-port-bootstrap'
+group = 'team.creative'
+archivesBaseName = 'littletiles-1.16.5'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+
+def creativeCoreRoot = file(findProperty('creativeCoreDir') ?: 'dependencies/CreativeCore')
+if (!creativeCoreRoot.isDirectory()) {
+    throw new GradleException(
+        "CreativeCore 1.16 sources were not found at ${creativeCoreRoot}. " +
+        "Clone https://github.com/CreativeMD/CreativeCore at tag archive/1.16 " +
+        "or pass -PcreativeCoreDir=<path>."
+    )
+}
+
+minecraft {
+    mappings channel: 'official', version: '1.16.5'
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'info'
+            mods {
+                creativecore { source sourceSets.main }
+                littletiles { source sourceSets.main }
+            }
+        }
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'info'
+            mods {
+                creativecore { source sourceSets.main }
+                littletiles { source sourceSets.main }
+            }
+        }
+        data {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'info'
+            args '--mod', 'littletiles', '--all', '--output', file('build/generated-resources'), '--existing', file('src/main/resources')
+            mods {
+                creativecore { source sourceSets.main }
+                littletiles { source sourceSets.main }
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir "${creativeCoreRoot}/src/main/java"
+            // Bootstrap milestone: prove the Forge/CreativeCore runtime first. The
+            // remaining 1.16 draft is enabled subsystem-by-subsystem as it is ported.
+            include 'team/creative/creativecore/**'
+            include 'team/creative/littletiles/LittleTiles.java'
+            include 'com/sun/javafx/geom/transform/SingularMatrixException.java'
+        }
+        resources {
+            srcDir "${creativeCoreRoot}/src/main/resources"
+            exclude 'mcmod.info'
+        }
+    }
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.16.5-36.2.39'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+jar {
+    manifest {
+        attributes([
+            'Specification-Title': 'LittleTiles',
+            'Specification-Vendor': 'CreativeMD',
+            'Specification-Version': '1',
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version,
+            'Implementation-Vendor': 'CreativeMD'
+        ])
+    }
+}
+
+jar.finalizedBy('reobfJar')

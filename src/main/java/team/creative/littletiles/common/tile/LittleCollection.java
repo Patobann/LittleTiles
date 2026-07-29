@@ -20,8 +20,8 @@ public class LittleCollection implements Iterable<LittleTile> {
     protected List<LittleTile> content = createInternalList();
     
     public void add(LittleTile tile) {
-        
-        adasd
+        content.add(tile);
+        added(tile);
     }
     
     protected void added(LittleTile tile) {}
