@@ -19,6 +19,8 @@ Verified on Java 8 (Temurin 8u492):
   `LittleBoxReturnedVolume`, and `BasicCombiner` compile as active 1.16 code.
 - Twelve focused tests cover grid/vector coordinates plus box splitting,
   combining, clipping, ray tracing, volume accounting, and current/legacy NBT.
+- The Forge runtime smoke-test verifies full `BlockState` property serialization
+  and `LittleElement` color/NBT round-tripping.
 
 This milestone deliberately registers no LittleTiles blocks, items, tile
 entities, packets, screens, or renderers yet. It proves the build, mappings,
@@ -53,7 +55,7 @@ gradlew runData
 | --- | --- | --- |
 | 0 | Forge workspace, metadata, CreativeCore, mod entrypoint | Working |
 | 1 | Grid and math primitives (`LittleGrid`, vectors, boxes) | In progress: base boxes working; transformable boxes and face adapters next |
-| 2 | Little block/material registry and tile serialization | Not started |
+| 2 | Little block/material registry and tile serialization | In progress: block-state registry and `LittleElement` NBT working |
 | 3 | LittleTiles block entity, NBT save/load, block registration | Not started |
 | 4 | Placement, removal, collision, selection, networking | Not started |
 | 5 | Client rendering and basic tools | Not started |
