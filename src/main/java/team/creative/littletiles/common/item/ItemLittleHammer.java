@@ -7,7 +7,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -48,7 +47,7 @@ public class ItemLittleHammer extends Item {
             if (!removed.has())
                 continue;
             if (!context.getPlayer().isCreative()) {
-                ItemStack bag = findBag(context.getPlayer());
+                ItemStack bag = ItemLittleBag.find(context.getPlayer());
                 if (bag.isEmpty() || !ItemLittleBag.add(bag, tile.getState(), removed.getPercentVolume(grid)))
                     return ActionResultType.FAIL;
             }
@@ -60,15 +59,6 @@ public class ItemLittleHammer extends Item {
             return ActionResultType.CONSUME;
         }
         return ActionResultType.PASS;
-    }
-
-    private static ItemStack findBag(PlayerEntity player) {
-        for (int i = 0; i < player.inventory.getContainerSize(); i++) {
-            ItemStack stack = player.inventory.getItem(i);
-            if (stack.getItem() instanceof ItemLittleBag)
-                return stack;
-        }
-        return ItemStack.EMPTY;
     }
 
     private static LittleBox clickedCell(ItemUseContext context, LittleGrid grid) {

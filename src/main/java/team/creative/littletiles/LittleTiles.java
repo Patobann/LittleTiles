@@ -136,7 +136,9 @@ public class LittleTiles {
             if (!ItemLittleBag.add(bag, Blocks.STONE.defaultBlockState(), 0.5D)
                     || !ItemLittleBag.add(bag, Blocks.STONE.defaultBlockState(), 0.5D)
                     || bag.getTag().getList("inv", 10).size() != 1
-                    || bag.getTag().getList("inv", 10).getCompound(0).getDouble("volume") != 1.0D)
+                    || bag.getTag().getList("inv", 10).getCompound(0).getDouble("volume") != 1.0D
+                    || !ItemLittleBag.take(bag, Blocks.STONE.defaultBlockState(), 0.25D)
+                    || bag.getTag().getList("inv", 10).getCompound(0).getDouble("volume") != 0.75D)
                 throw new IllegalStateException("Little ingredient bag volume accounting failed");
             LOGGER.info("LittleTiles block entity registered and NBT-verified");
     }

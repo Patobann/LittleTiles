@@ -31,7 +31,8 @@ and most tools are not restored yet. The first chisel interaction converts a saf
 vanilla block into a full-size little tile while preserving its `BlockState`.
 The hammer removes one grid cell without damaging the remaining boxes. In survival,
 it atomically stores the exact fractional `BlockState` volume in the original-style
-24-slot ingredient bag; the bag has a crafting recipe and a basic tooltip.
+24-slot ingredient bag. The chisel remembers a converted block material and places
+single cells back into cavities or adjacent air, atomically consuming bag volume.
 
 ## Source policy
 
@@ -64,7 +65,7 @@ gradlew runData
 | 1 | Grid and math primitives (`LittleGrid`, vectors, boxes) | In progress: base boxes working; transformable boxes and face adapters next |
 | 2 | Little block/material registry and tile serialization | Working for base boxes: state, color, multi-box tile, collection NBT |
 | 3 | LittleTiles block entity, NBT save/load, block registration | In progress: block/item/type registered and persistent; world behavior next |
-| 4 | Placement, removal, collision, selection, networking | In progress: tile-derived selection/collision and vanilla block-entity sync working |
+| 4 | Placement, removal, collision, selection, networking | In progress: one-cell survival placement/removal, tile-derived shapes, and vanilla sync working |
 | 5 | Client rendering and basic tools | In progress: base boxes render; chisel conversion and creative one-cell hammer cutout work |
 | 6 | Blueprints, GUI, undo/redo | Not started |
 | 7 | Structures, doors, animations, lifts | Not started |

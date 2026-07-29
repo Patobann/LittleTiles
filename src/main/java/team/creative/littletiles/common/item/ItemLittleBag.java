@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -40,6 +41,48 @@ public class ItemLittleBag extends Item {
         return entry.contains("s", 8) ? entry.getString("s") : entry.getString("block");
     }
 
+    public static ItemStack find(PlayerEntity player) {
+        for (int i = 0; i < player.inventory.getContainerSize(); i++) {
+            ItemStack stack = player.inventory.getItem(i);
+            if (stack.getItem() instanceof ItemLittleBag)
+                return stack;
+        }
+        return ItemStack.EMPTY;
+    }
+
+    public static boolean canTake(ItemStack stack, BlockState state, double volume) {
+        if (stack.isEmpty())
+            return false;
+        ListNBT inventory = stack.getOrCreateTag().getList("inv", 10);
+        String stateName = LittleBlockRegistry.saveState(state);
+        for (int i = 0; i < inventory.size(); i++) {
+            CompoundNBT entry = inventory.getCompound(i);
+            if (stateName.equals(readStateName(entry)))
+                return entry.getDouble("volume") + 1.0E-12D >= volume;
+        }
+        return false;
+    }
+
+    public static boolean take(ItemStack stack, BlockState state, double volume) {
+        if (!canTake(stack, state, volume))
+            return false;
+        CompoundNBT tag = stack.getOrCreateTag();
+        ListNBT inventory = tag.getList("inv", 10);
+        String stateName = LittleBlockRegistry.saveState(state);
+        for (int i = 0; i < inventory.size(); i++) {
+            CompoundNBT entry = inventory.getCompound(i);
+            if (!stateName.equals(readStateName(entry)))
+                continue;
+            double remaining = entry.getDouble("volume") - volume;
+            if (remaining <= 1.0E-12D)
+                inventory.remove(i);
+            else
+                entry.putDouble("volume", remaining);
+            tag.put("inv", inventory);
+            return true;
+        }
+        return false;
+    }
     public static boolean canAdd(ItemStack stack, BlockState state, double volume) {
         ListNBT inventory = stack.getOrCreateTag().getList("inv", 10);
         String stateName = LittleBlockRegistry.saveState(state);
