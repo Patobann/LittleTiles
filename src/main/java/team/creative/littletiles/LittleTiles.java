@@ -97,6 +97,8 @@ public class LittleTiles {
             throw new IllegalStateException("Little collection NBT/box iteration failed");
         if (!loadedCollection.combineTiles() || loadedCollection.size() != 1 || loadedCollection.boxCount() != 1 || loadedCollection.getVolume() != 4096)
             throw new IllegalStateException("Little collection combination failed");
+        if (BlockTiles.countFullBlocks(LittleGrid.overallDefault(), loadedCollection).get(state) != 1)
+            throw new IllegalStateException("Little material block-equivalent accounting failed");
 
         LOGGER.info("Little block-state/tile codecs loaded: {}", serialized);
     }
