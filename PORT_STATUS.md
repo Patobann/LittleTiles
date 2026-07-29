@@ -15,6 +15,8 @@ Verified on Java 8 (Temurin 8u492):
 - CreativeCore `archive/1.16` loads from the pinned submodule.
 - Forge constructs the LittleTiles mod entrypoint.
 - The runtime log contains `LittleTiles 1.16.5 port bootstrap loaded`.
+- `LittleGrid`, `IGridBased`, `LittleUtils`, and `LittleVec` compile as
+  active 1.16 code and pass focused coordinate/NBT tests.
 
 This milestone deliberately registers no LittleTiles blocks, items, tile
 entities, packets, screens, or renderers yet. It proves the build, mappings,
@@ -48,7 +50,7 @@ gradlew runData
 | Stage | Subsystem | State |
 | --- | --- | --- |
 | 0 | Forge workspace, metadata, CreativeCore, mod entrypoint | Working |
-| 1 | Grid and math primitives (`LittleGrid`, vectors, boxes) | Next |
+| 1 | Grid and math primitives (`LittleGrid`, vectors, boxes) | In progress: grid/vector working; boxes next |
 | 2 | Little block/material registry and tile serialization | Not started |
 | 3 | LittleTiles block entity, NBT save/load, block registration | Not started |
 | 4 | Placement, removal, collision, selection, networking | Not started |
@@ -64,6 +66,9 @@ They are mostly references to systems that were never moved out of the 1.12.2
 package, rather than isolated name changes. Six syntax blockers in the draft
 have already been repaired, but those files remain outside the bootstrap source
 set until their dependency layer is ported.
+
+The grid/vector tests cover default grid initialization, coordinate conversion,
+negative block offsets, minimum-grid selection, equality, and NBT round-trips.
 
 No feature should be marked working merely because it compiles. Each stage must
 add focused serialization/math tests plus a Forge runtime smoke test before the

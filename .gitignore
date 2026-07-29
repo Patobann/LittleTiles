@@ -3,6 +3,7 @@ build/
 run/
 out/
 graphify-out/
+logs/
 
 # Local bootstrap tooling and IDE state.
 .tooling/

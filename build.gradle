@@ -66,6 +66,9 @@ sourceSets {
             // remaining 1.16 draft is enabled subsystem-by-subsystem as it is ported.
             include 'team/creative/creativecore/**'
             include 'team/creative/littletiles/LittleTiles.java'
+            include 'team/creative/littletiles/common/grid/**'
+            include 'team/creative/littletiles/common/math/LittleUtils.java'
+            include 'team/creative/littletiles/common/math/vec/LittleVec.java'
             include 'com/sun/javafx/geom/transform/SingularMatrixException.java'
         }
         resources {
@@ -77,6 +80,7 @@ sourceSets {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.16.5-36.2.39'
+    testImplementation 'junit:junit:4.13.2'
 }
 
 tasks.withType(JavaCompile).configureEach {
