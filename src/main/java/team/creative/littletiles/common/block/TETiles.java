@@ -9,11 +9,29 @@ import team.creative.littletiles.LittleTiles;
 import team.creative.littletiles.common.grid.IGridBased;
 import team.creative.littletiles.common.grid.LittleGrid;
 import team.creative.littletiles.common.tile.LittleCollectionSafe;
+import team.creative.littletiles.common.tile.LittleTile;
 
 public class TETiles extends TileEntity implements IGridBased {
 
     private LittleGrid grid = LittleGrid.overallDefault();
-    private final LittleCollectionSafe tiles = new LittleCollectionSafe();
+    private boolean loading;
+    private final LittleCollectionSafe tiles = new LittleCollectionSafe() {
+
+        @Override
+        protected void added(LittleTile tile) {
+            tilesChanged();
+        }
+
+        @Override
+        protected void removed(LittleTile tile) {
+            tilesChanged();
+        }
+
+        @Override
+        protected void refresh() {
+            tilesChanged();
+        }
+    };
 
     public TETiles() {
         super(LittleTiles.TILES_TE_TYPE.get());
@@ -34,7 +52,7 @@ public class TETiles extends TileEntity implements IGridBased {
             return;
         tiles.convertTo(grid, to);
         grid = to;
-        setChanged();
+        tilesChanged();
     }
 
     @Override
@@ -45,8 +63,13 @@ public class TETiles extends TileEntity implements IGridBased {
     @Override
     public void load(BlockState state, CompoundNBT nbt) {
         super.load(state, nbt);
-        grid = LittleGrid.get(nbt);
-        tiles.load(nbt.getList("tiles", 10));
+        loading = true;
+        try {
+            grid = LittleGrid.get(nbt);
+            tiles.load(nbt.getList("tiles", 10));
+        } finally {
+            loading = false;
+        }
     }
 
     @Override
@@ -68,11 +91,22 @@ public class TETiles extends TileEntity implements IGridBased {
     public void onDataPacket(NetworkManager network, SUpdateTileEntityPacket packet) {
         load(getBlockState(), packet.getTag());
     }
+
     @Override
     public CompoundNBT save(CompoundNBT nbt) {
         super.save(nbt);
         grid.set(nbt);
         nbt.put("tiles", tiles.save());
         return nbt;
+    }
+
+    private void tilesChanged() {
+        if (loading)
+            return;
+        setChanged();
+        if (level != null && !level.isClientSide) {
+            BlockState state = getBlockState();
+            level.sendBlockUpdated(worldPosition, state, state, 3);
+        }
     }
 }
