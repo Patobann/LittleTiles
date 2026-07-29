@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "LIL",
+    " L "
+  ],
+  "key": {
+    "S": { "item": "minecraft:string" },
+    "L": { "item": "minecraft:leather" },
+    "I": { "item": "minecraft:lapis_lazuli" }
+  },
+  "result": {
+    "item": "littletiles:container"
+  }
+}

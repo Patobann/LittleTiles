@@ -12,6 +12,7 @@ import net.minecraft.block.HorizontalBlock;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -30,6 +31,7 @@ import team.creative.littletiles.common.block.TETiles;
 import team.creative.littletiles.common.grid.LittleGrid;
 import team.creative.littletiles.common.item.ItemLittleChisel;
 import team.creative.littletiles.common.item.ItemLittleHammer;
+import team.creative.littletiles.common.item.ItemLittleBag;
 import team.creative.littletiles.common.math.box.LittleBox;
 import team.creative.littletiles.common.tile.LittleCollection;
 import team.creative.littletiles.common.tile.LittleElement;
@@ -50,6 +52,8 @@ public class LittleTiles {
             () -> new ItemLittleChisel(new Item.Properties().stacksTo(1).tab(ItemGroup.TAB_TOOLS)));
     public static final RegistryObject<Item> HAMMER_ITEM = ITEMS.register("hammer",
             () -> new ItemLittleHammer(new Item.Properties().stacksTo(1).tab(ItemGroup.TAB_TOOLS)));
+    public static final RegistryObject<Item> CONTAINER_ITEM = ITEMS.register("container",
+            () -> new ItemLittleBag(new Item.Properties().stacksTo(1).tab(ItemGroup.TAB_TOOLS)));
     public static final RegistryObject<Item> TILES_ITEM = ITEMS.register("tiles",
             () -> new BlockItem(TILES_BLOCK.get(), new Item.Properties().tab(ItemGroup.TAB_BUILDING_BLOCKS)));
     public static final RegistryObject<TileEntityType<TETiles>> TILES_TE_TYPE = TILE_ENTITIES.register("tiles",
@@ -128,6 +132,12 @@ public class LittleTiles {
             VoxelShape shape = BlockTiles.createShape(loaded.getGrid(), loaded.getTiles());
             if (shape.isEmpty() || shape.bounds().minX != 0 || shape.bounds().maxX != 0.5D || shape.bounds().maxY != 1 || shape.bounds().maxZ != 1)
                 throw new IllegalStateException("LittleTiles voxel shape generation failed");
+            ItemStack bag = new ItemStack(CONTAINER_ITEM.get());
+            if (!ItemLittleBag.add(bag, Blocks.STONE.defaultBlockState(), 0.5D)
+                    || !ItemLittleBag.add(bag, Blocks.STONE.defaultBlockState(), 0.5D)
+                    || bag.getTag().getList("inv", 10).size() != 1
+                    || bag.getTag().getList("inv", 10).getCompound(0).getDouble("volume") != 1.0D)
+                throw new IllegalStateException("Little ingredient bag volume accounting failed");
             LOGGER.info("LittleTiles block entity registered and NBT-verified");
     }
 }

@@ -29,8 +29,9 @@ renderer draws each base `LittleBox` with its stored vanilla `BlockState`.
 Per-element tinting, internal-face culling, full placement modes, packets, screens,
 and most tools are not restored yet. The first chisel interaction converts a safe
 vanilla block into a full-size little tile while preserving its `BlockState`.
-The first creative-only hammer interaction removes one grid cell without damaging
-the remaining boxes; survival cutout waits for fractional ingredient storage.
+The hammer removes one grid cell without damaging the remaining boxes. In survival,
+it atomically stores the exact fractional `BlockState` volume in the original-style
+24-slot ingredient bag; the bag has a crafting recipe and a basic tooltip.
 
 ## Source policy
 

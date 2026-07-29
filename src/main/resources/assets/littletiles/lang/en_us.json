@@ -1,5 +1,6 @@
 {
   "block.littletiles.tiles": "Little Tiles",
   "item.littletiles.chisel": "Little Chisel",
-  "item.littletiles.hammer": "Little Hammer (Creative Cutout)"
+  "item.littletiles.hammer": "Little Hammer",
+  "item.littletiles.container": "Little Ingredient Bag"
 }

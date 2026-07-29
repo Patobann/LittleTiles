@@ -6,6 +6,8 @@ import java.util.List;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.item.ItemStack;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -30,7 +32,7 @@ public class ItemLittleHammer extends Item {
         BlockPos pos = context.getClickedPos();
         if (!(level.getBlockEntity(pos) instanceof TETiles))
             return ActionResultType.PASS;
-        if (context.getPlayer() == null || !context.getPlayer().isCreative())
+        if (context.getPlayer() == null)
             return ActionResultType.FAIL;
         if (level.isClientSide)
             return ActionResultType.SUCCESS;
@@ -45,6 +47,11 @@ public class ItemLittleHammer extends Item {
             List<LittleBox> remainder = tile.cutOut(cut, removed);
             if (!removed.has())
                 continue;
+            if (!context.getPlayer().isCreative()) {
+                ItemStack bag = findBag(context.getPlayer());
+                if (bag.isEmpty() || !ItemLittleBag.add(bag, tile.getState(), removed.getPercentVolume(grid)))
+                    return ActionResultType.FAIL;
+            }
             blockEntity.getTiles().remove(tile);
             if (!remainder.isEmpty())
                 blockEntity.getTiles().add(new LittleTile(tile, remainder));
@@ -53,6 +60,15 @@ public class ItemLittleHammer extends Item {
             return ActionResultType.CONSUME;
         }
         return ActionResultType.PASS;
+    }
+
+    private static ItemStack findBag(PlayerEntity player) {
+        for (int i = 0; i < player.inventory.getContainerSize(); i++) {
+            ItemStack stack = player.inventory.getItem(i);
+            if (stack.getItem() instanceof ItemLittleBag)
+                return stack;
+        }
+        return ItemStack.EMPTY;
     }
 
     private static LittleBox clickedCell(ItemUseContext context, LittleGrid grid) {
