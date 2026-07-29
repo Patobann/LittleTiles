@@ -12,6 +12,8 @@ Verified on Java 8 (Temurin 8u492):
 
 - `gradlew clean build` succeeds, including Forge reobfuscation.
 - `gradlew runData` starts Forge 36.2.39 and Minecraft 1.16.5.
+- `gradlew runClient` reaches an integrated world, registers the block-entity
+  renderer, and reloads models and seven recipes without LittleTiles exceptions.
 - CreativeCore `archive/1.16` loads from the pinned submodule.
 - Forge constructs the LittleTiles mod entrypoint.
 - The runtime log contains `LittleTiles 1.16.5 port bootstrap loaded`.
