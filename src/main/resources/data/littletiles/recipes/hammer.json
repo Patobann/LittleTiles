@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["XXX", " L ", " L "],
+  "key": {
+    "X": { "item": "minecraft:iron_ingot" },
+    "L": { "item": "minecraft:lapis_lazuli" }
+  },
+  "result": { "item": "littletiles:hammer" }
+}
