@@ -87,7 +87,6 @@ sourceSets {
             include 'team/creative/littletiles/common/item/ItemLittleBag.java'
             include 'team/creative/littletiles/common/item/LittleToolGrid.java'
             include 'team/creative/littletiles/common/item/LittleToolSelection.java'
-            include 'team/creative/littletiles/common/item/LittleToolEventHandler.java'
             include 'team/creative/littletiles/common/item/LittleToolActionPacket.java'
             include 'team/creative/littletiles/common/math/LittleUtils.java'
             include 'team/creative/littletiles/common/math/LittlePlacementMath.java'

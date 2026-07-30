@@ -88,6 +88,11 @@ public class ItemLittleHammer extends Item {
         return 0;
     }
 
+    @Override
+    public boolean canAttackBlock(BlockState state, World level, BlockPos pos, PlayerEntity player) {
+        return false;
+    }
+
     public static ActionResultType click(World level, PlayerEntity player, ItemStack hammer, BlockPos pos, Direction face, Vector3d hit) {
         if (!player.mayUseItemAt(pos, face, hammer))
             return ActionResultType.FAIL;
