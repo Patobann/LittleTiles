@@ -15,17 +15,17 @@ public class LittleGridTest {
 
     @Before
     public void resetGridConfiguration() {
-        LittleGrid.loadGrid(2, 7, 2, LittleGrid.OVERALL_DEFAULT);
+        LittleGrid.loadGrid(1, 8, 2, LittleGrid.OVERALL_DEFAULT);
     }
 
     @Test
     public void createsExpectedGridSequence() {
-        assertEquals(7, LittleGrid.grids.length);
-        assertEquals(2, LittleGrid.min().count);
+        assertEquals(8, LittleGrid.grids.length);
+        assertEquals(1, LittleGrid.min().count);
         assertEquals(16, LittleGrid.overallDefault().count);
         assertEquals(16, LittleGrid.defaultGrid().count);
         assertEquals(128, LittleGrid.getMax().count);
-        assertEquals("16", LittleGrid.names().get(3));
+        assertEquals("16", LittleGrid.names().get(4));
     }
 
     @Test

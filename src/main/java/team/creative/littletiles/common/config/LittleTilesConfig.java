@@ -237,7 +237,7 @@ public class LittleTilesConfig {
         public int base = 1;
         
         @CreativeConfig
-        public int scale = 6;
+        public int scale = 8;
         
         @CreativeConfig
         public int exponent = 2;

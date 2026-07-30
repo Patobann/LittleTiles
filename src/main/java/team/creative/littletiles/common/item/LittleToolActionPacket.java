@@ -25,9 +25,14 @@ public class LittleToolActionPacket extends CreativePacket {
     public int maxZ;
     public Direction face;
 
+    public int placement;
     public LittleToolActionPacket() {}
 
     public LittleToolActionPacket(int action, Area area, Direction face) {
+        this(action, area, face, LittlePlacementMode.NORMAL);
+    }
+
+    public LittleToolActionPacket(int action, Area area, Direction face, LittlePlacementMode placement) {
         this.action = action;
         this.origin = area.origin;
         this.grid = area.grid.count;
@@ -38,6 +43,7 @@ public class LittleToolActionPacket extends CreativePacket {
         this.maxY = area.box.maxY;
         this.maxZ = area.box.maxZ;
         this.face = face;
+        this.placement = placement.ordinal();
     }
 
     @Override
@@ -64,8 +70,10 @@ public class LittleToolActionPacket extends CreativePacket {
             return;
 
         Area area = new Area(origin, selectedGrid, box);
-        if (action == CHISEL && held.getItem() instanceof ItemLittleChisel)
+        if (action == CHISEL && held.getItem() instanceof ItemLittleChisel) {
+            LittlePlacementMode.set(held, LittlePlacementMode.byIndex(placement));
             ItemLittleChisel.applyArea(player.level, player, held, area, face);
+        }
         else if (action == HAMMER && held.getItem() instanceof ItemLittleHammer)
             ItemLittleHammer.applyArea(player.level, player, held, area, face);
     }

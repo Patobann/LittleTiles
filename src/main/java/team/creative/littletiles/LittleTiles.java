@@ -35,7 +35,7 @@ import team.creative.littletiles.common.block.BlockTiles;
 import team.creative.littletiles.common.block.LittleBlockRegistry;
 import team.creative.littletiles.common.block.TETiles;
 import team.creative.littletiles.common.grid.LittleGrid;
-import team.creative.littletiles.common.gui.LittleToolConfigGui;
+import team.creative.littletiles.common.gui.LittleOriginalToolConfigGui;
 import team.creative.littletiles.common.item.ItemLittleChisel;
 import team.creative.littletiles.common.item.ItemLittleHammer;
 import team.creative.littletiles.common.item.ItemLittleBag;
@@ -79,7 +79,7 @@ public class LittleTiles {
         GuiContainerHandler.registerGuiHandler("littletiles_tool", new GuiHandlerPlayer() {
             @Override
             public GuiLayer create(PlayerEntity player) {
-                return new LittleToolConfigGui(player);
+                return new LittleOriginalToolConfigGui(player);
             }
         });
         modBus.addListener(this::commonSetup);

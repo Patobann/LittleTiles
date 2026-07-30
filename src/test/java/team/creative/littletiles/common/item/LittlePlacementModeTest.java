@@ -13,7 +13,7 @@ public class LittlePlacementModeTest {
 
     @Before
     public void resetGridConfiguration() {
-        LittleGrid.loadGrid(2, 7, 2, LittleGrid.OVERALL_DEFAULT);
+        LittleGrid.loadGrid(1, 8, 2, LittleGrid.OVERALL_DEFAULT);
     }
 
     @Test

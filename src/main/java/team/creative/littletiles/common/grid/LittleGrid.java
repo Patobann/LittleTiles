@@ -24,7 +24,7 @@ public class LittleGrid {
     public static int exponent;
 
     static {
-        loadGrid(2, 7, 2, OVERALL_DEFAULT);
+        loadGrid(1, 8, 2, OVERALL_DEFAULT);
     }
 
     public static void loadGrid(int base, int scale, int exponent, int defaultGrid) {

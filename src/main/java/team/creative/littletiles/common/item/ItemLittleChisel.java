@@ -36,9 +36,36 @@ import team.creative.littletiles.common.tile.LittleTile;
 public class ItemLittleChisel extends Item {
 
     private static final String SELECTED_STATE = "selected";
+    private static final String SELECTED_COLOR = "selectedColor";
 
     public ItemLittleChisel(Properties properties) {
         super(properties);
+    }
+
+    public static boolean hasSelectedMaterial(ItemStack stack) {
+        return stack.hasTag() && stack.getTag().contains(SELECTED_STATE, 8);
+    }
+
+    public static BlockState getSelectedState(ItemStack stack) {
+        if (!hasSelectedMaterial(stack))
+            return net.minecraft.block.Blocks.AIR.defaultBlockState();
+        return LittleBlockRegistry.loadState(stack.getTag().getString(SELECTED_STATE));
+    }
+
+    public static void setSelectedState(ItemStack stack, BlockState state) {
+        stack.getOrCreateTag().putString(SELECTED_STATE, LittleBlockRegistry.saveState(state));
+    }
+
+    public static int getSelectedColor(ItemStack stack) {
+        return stack.hasTag() && stack.getTag().contains(SELECTED_COLOR, 3)
+                ? stack.getTag().getInt(SELECTED_COLOR) : ColorUtils.WHITE;
+    }
+
+    public static void setSelectedColor(ItemStack stack, int color) {
+        if (color == ColorUtils.WHITE && stack.hasTag())
+            stack.getTag().remove(SELECTED_COLOR);
+        else
+            stack.getOrCreateTag().putInt(SELECTED_COLOR, color);
     }
 
     @Override
@@ -105,7 +132,7 @@ public class ItemLittleChisel extends Item {
         if (level.isClientSide)
             return ActionResultType.SUCCESS;
 
-        chisel.getOrCreateTag().putString(SELECTED_STATE, LittleBlockRegistry.saveState(originalState));
+        setSelectedState(chisel, originalState);
         BlockState tilesState = LittleTiles.TILES_BLOCK.get().defaultBlockState();
         if (!level.setBlock(pos, tilesState, 3))
             return ActionResultType.FAIL;
@@ -128,8 +155,10 @@ public class ItemLittleChisel extends Item {
         for (LittleTile tile : clickedTiles.getTiles()) {
             if (!tile.intersectsWith(cell))
                 continue;
-            if (!context.getLevel().isClientSide)
-                chisel.getOrCreateTag().putString(SELECTED_STATE, LittleBlockRegistry.saveState(tile.getState()));
+            if (!context.getLevel().isClientSide) {
+                setSelectedState(chisel, tile.getState());
+                setSelectedColor(chisel, tile.color);
+            }
             return context.getLevel().isClientSide ? ActionResultType.SUCCESS : ActionResultType.CONSUME;
         }
         return ActionResultType.PASS;
@@ -137,9 +166,9 @@ public class ItemLittleChisel extends Item {
 
     private static ActionResultType placeSelection(ItemUseContext context) {
         ItemStack chisel = context.getItemInHand();
-        if (!chisel.hasTag() || !chisel.getTag().contains(SELECTED_STATE, 8))
+        if (!hasSelectedMaterial(chisel))
             return ActionResultType.FAIL;
-        BlockState selected = LittleBlockRegistry.loadState(chisel.getTag().getString(SELECTED_STATE));
+        BlockState selected = getSelectedState(chisel);
         if (selected.isAir())
             return ActionResultType.FAIL;
         World level = context.getLevel();
@@ -161,7 +190,8 @@ public class ItemLittleChisel extends Item {
             context.getPlayer().displayClientMessage(new StringTextComponent("LittleTiles: first corner set"), true);
             return ActionResultType.SUCCESS;
         }
-        LittleTiles.NETWORK.sendToServer(new LittleToolActionPacket(LittleToolActionPacket.CHISEL, area, face));
+        LittleTiles.NETWORK.sendToServer(new LittleToolActionPacket(LittleToolActionPacket.CHISEL, area, face,
+                LittlePlacementMode.get(chisel)));
         return ActionResultType.SUCCESS;
     }
 
@@ -173,13 +203,14 @@ public class ItemLittleChisel extends Item {
         LittleBox point = LittlePlacementMath.cell(pos, hit, grid, grid);
         Area area = LittleToolSelection.click(chisel, pos, point, grid, grid);
         if (area != null)
-            LittleTiles.NETWORK.sendToServer(new LittleToolActionPacket(LittleToolActionPacket.CHISEL, area, Direction.UP));
+            LittleTiles.NETWORK.sendToServer(new LittleToolActionPacket(LittleToolActionPacket.CHISEL, area, Direction.UP,
+                    LittlePlacementMode.get(chisel)));
     }
 
     public static ActionResultType applyArea(World level, PlayerEntity player, ItemStack chisel, Area area, Direction face) {
-        if (!chisel.hasTag() || !chisel.getTag().contains(SELECTED_STATE, 8))
+        if (!hasSelectedMaterial(chisel))
             return ActionResultType.FAIL;
-        BlockState selected = LittleBlockRegistry.loadState(chisel.getTag().getString(SELECTED_STATE));
+        BlockState selected = getSelectedState(chisel);
         if (selected.isAir())
             return ActionResultType.FAIL;
 
@@ -254,7 +285,7 @@ public class ItemLittleChisel extends Item {
         for (Placement placement : placements) {
             if (placement.tiles.getGrid() != placement.grid)
                 placement.tiles.convertTo(placement.grid);
-            placement.tiles.getTiles().add(new LittleTile(selected, ColorUtils.WHITE, placement.boxes));
+            placement.tiles.getTiles().add(new LittleTile(selected, getSelectedColor(chisel), placement.boxes));
             placement.tiles.getTiles().combineTiles();
         }
         return ActionResultType.CONSUME;
