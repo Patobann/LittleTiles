@@ -121,4 +121,18 @@ public class LittleBoxTest {
         assertFalse(volume.has());
         assertEquals(0, volume.getVolume());
     }
+
+    @Test
+    public void derivesSolidCutVolumeFromRemainder() {
+        LittleBox source = new LittleBox(0, 0, 0, 4, 4, 4);
+        LittleBoxReturnedVolume approximationLoss = new LittleBoxReturnedVolume();
+        List<LittleBox> remainder = source.cutOut(new LittleBox(1, 0, 0, 3, 4, 4), approximationLoss);
+
+        int remainingVolume = 0;
+        for (LittleBox box : remainder)
+            remainingVolume += box.getVolume();
+
+        assertFalse(approximationLoss.has());
+        assertEquals(32D, source.getVolume() - remainingVolume, 0.0D);
+    }
 }

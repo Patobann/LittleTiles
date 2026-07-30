@@ -31,7 +31,6 @@ import team.creative.littletiles.common.grid.LittleGrid;
 import team.creative.littletiles.common.item.LittleToolSelection.Area;
 import team.creative.littletiles.common.math.LittlePlacementMath;
 import team.creative.littletiles.common.math.box.LittleBox;
-import team.creative.littletiles.common.math.box.LittleBoxReturnedVolume;
 import team.creative.littletiles.common.tile.LittleTile;
 
 public class ItemLittleHammer extends Item {
@@ -136,10 +135,15 @@ public class ItemLittleHammer extends Item {
                 for (LittleBox box : tile)
                     scaledBoxes.add(LittleToolSelection.scale(box, tiles.getGrid(), grid));
                 LittleTile workingTile = new LittleTile(tile, scaledBoxes);
-                LittleBoxReturnedVolume removed = new LittleBoxReturnedVolume();
-                List<LittleBox> remainder = workingTile.cutOut(cut, removed);
-                if (removed.has())
-                    removals.add(new Removal(blockPos, tiles, tile, remainder, removed.getPercentVolume(grid), grid));
+                if (!workingTile.intersectsWith(cut))
+                    continue;
+                List<LittleBox> remainder = workingTile.cutOut(cut, null);
+                double remainingVolume = 0;
+                for (LittleBox box : remainder)
+                    remainingVolume += box.getVolume();
+                double removedVolume = (workingTile.getVolume() - remainingVolume) / grid.count3d;
+                if (removedVolume > 0)
+                    removals.add(new Removal(blockPos, tiles, tile, remainder, removedVolume, grid));
             }
             affected.put(blockPos, tiles);
         }
