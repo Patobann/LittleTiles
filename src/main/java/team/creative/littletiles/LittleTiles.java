@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -25,6 +26,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.fml.RegistryObject;
+import team.creative.creativecore.common.network.CreativeNetwork;
 import team.creative.littletiles.common.block.BlockTiles;
 import team.creative.littletiles.common.block.LittleBlockRegistry;
 import team.creative.littletiles.common.block.TETiles;
@@ -32,6 +34,7 @@ import team.creative.littletiles.common.grid.LittleGrid;
 import team.creative.littletiles.common.item.ItemLittleChisel;
 import team.creative.littletiles.common.item.ItemLittleHammer;
 import team.creative.littletiles.common.item.ItemLittleBag;
+import team.creative.littletiles.common.item.LittleToolActionPacket;
 import team.creative.littletiles.common.math.box.LittleBox;
 import team.creative.littletiles.common.tile.LittleCollection;
 import team.creative.littletiles.common.tile.LittleElement;
@@ -42,6 +45,7 @@ public class LittleTiles {
 
     public static final String MODID = "littletiles";
     public static final Logger LOGGER = LogManager.getLogger(MODID);
+    public static final CreativeNetwork NETWORK = new CreativeNetwork("1", LOGGER, new ResourceLocation(MODID, "main"));
 
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
@@ -64,6 +68,7 @@ public class LittleTiles {
         BLOCKS.register(modBus);
         ITEMS.register(modBus);
         TILE_ENTITIES.register(modBus);
+        NETWORK.registerType(LittleToolActionPacket.class);
         modBus.addListener(this::commonSetup);
         modBus.addListener(this::gatherData);
 

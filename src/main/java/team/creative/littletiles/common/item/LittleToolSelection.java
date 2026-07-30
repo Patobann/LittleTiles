@@ -119,7 +119,7 @@ public final class LittleToolSelection {
         public final LittleGrid grid;
         public final LittleBox box;
 
-        Area(BlockPos origin, LittleGrid grid, LittleBox box) {
+        public Area(BlockPos origin, LittleGrid grid, LittleBox box) {
             this.origin = origin;
             this.grid = grid;
             this.box = box;

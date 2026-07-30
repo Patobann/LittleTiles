@@ -40,6 +40,16 @@ public final class LittlePlacementMath {
         return new LittleBox(x, y, z, x + size, y + size, z + size);
     }
 
+    public static LittleBox cell(BlockPos targetPos, Vector3d hit, LittleGrid grid, LittleGrid selectedGrid) {
+        if (grid.count < selectedGrid.count || grid.count % selectedGrid.count != 0)
+            throw new IllegalArgumentException("Selected grid " + selectedGrid.count + " does not fit working grid " + grid.count);
+        int size = grid.count / selectedGrid.count;
+        int x = align(coordinate(hit.x - targetPos.getX(), grid), size);
+        int y = align(coordinate(hit.y - targetPos.getY(), grid), size);
+        int z = align(coordinate(hit.z - targetPos.getZ(), grid), size);
+        return new LittleBox(x, y, z, x + size, y + size, z + size);
+    }
+
     private static int align(int coordinate, int size) {
         return coordinate / size * size;
     }

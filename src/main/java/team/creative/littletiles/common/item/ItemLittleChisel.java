@@ -140,7 +140,6 @@ public class ItemLittleChisel extends Item {
         BlockState selected = LittleBlockRegistry.loadState(chisel.getTag().getString(SELECTED_STATE));
         if (selected.isAir())
             return ActionResultType.FAIL;
-
         World level = context.getLevel();
         BlockPos clickedPos = context.getClickedPos();
         Direction face = context.getClickedFace();
@@ -154,19 +153,39 @@ public class ItemLittleChisel extends Item {
         LittleGrid workingGrid = target instanceof TETiles ? LittleGrid.max(((TETiles) target).getGrid(), selectedGrid) : selectedGrid;
         LittleBox point = LittlePlacementMath.cell(targetPos, hit, face, workingGrid, selectedGrid, false);
         Area area = LittleToolSelection.click(chisel, targetPos, point, workingGrid, selectedGrid);
+        if (!level.isClientSide)
+            return ActionResultType.CONSUME;
         if (area == null) {
-            if (!level.isClientSide)
-                context.getPlayer().displayClientMessage(new StringTextComponent("LittleTiles: first corner set"), true);
-            return level.isClientSide ? ActionResultType.SUCCESS : ActionResultType.CONSUME;
-        }
-        if (level.isClientSide)
+            context.getPlayer().displayClientMessage(new StringTextComponent("LittleTiles: first corner set"), true);
             return ActionResultType.SUCCESS;
+        }
+        LittleTiles.NETWORK.sendToServer(new LittleToolActionPacket(LittleToolActionPacket.CHISEL, area, face));
+        return ActionResultType.SUCCESS;
+    }
+
+    public static void clickAir(PlayerEntity player, ItemStack chisel, Vector3d hit) {
+        if (!LittleToolSelection.has(chisel))
+            return;
+        LittleGrid grid = LittleToolGrid.get(chisel);
+        BlockPos pos = new BlockPos(hit.x, hit.y, hit.z);
+        LittleBox point = LittlePlacementMath.cell(pos, hit, grid, grid);
+        Area area = LittleToolSelection.click(chisel, pos, point, grid, grid);
+        if (area != null)
+            LittleTiles.NETWORK.sendToServer(new LittleToolActionPacket(LittleToolActionPacket.CHISEL, area, Direction.UP));
+    }
+
+    public static ActionResultType applyArea(World level, PlayerEntity player, ItemStack chisel, Area area, Direction face) {
+        if (!chisel.hasTag() || !chisel.getTag().contains(SELECTED_STATE, 8))
+            return ActionResultType.FAIL;
+        BlockState selected = LittleBlockRegistry.loadState(chisel.getTag().getString(SELECTED_STATE));
+        if (selected.isAir())
+            return ActionResultType.FAIL;
 
         List<Placement> placements = new ArrayList<>();
         double totalVolume = 0;
         for (Map.Entry<BlockPos, LittleBox> entry : area.split().entrySet()) {
             BlockPos pos = entry.getKey();
-            if (!context.getPlayer().mayUseItemAt(pos, face, chisel))
+            if (!player.mayUseItemAt(pos, face, chisel))
                 return ActionResultType.FAIL;
             TileEntity blockEntity = level.getBlockEntity(pos);
             TETiles tiles = blockEntity instanceof TETiles ? (TETiles) blockEntity : null;
@@ -194,8 +213,8 @@ public class ItemLittleChisel extends Item {
         if (placements.isEmpty())
             return ActionResultType.PASS;
 
-        ItemStack bag = ItemLittleBag.find(context.getPlayer());
-        if (!context.getPlayer().isCreative() && !ItemLittleBag.canTake(bag, selected, totalVolume))
+        ItemStack bag = ItemLittleBag.find(player);
+        if (!player.isCreative() && !ItemLittleBag.canTake(bag, selected, totalVolume))
             return ActionResultType.FAIL;
 
         List<BlockPos> created = new ArrayList<>();
@@ -214,7 +233,7 @@ public class ItemLittleChisel extends Item {
             placement.tiles = (TETiles) blockEntity;
             created.add(placement.pos);
         }
-        if (!context.getPlayer().isCreative() && !ItemLittleBag.take(bag, selected, totalVolume)) {
+        if (!player.isCreative() && !ItemLittleBag.take(bag, selected, totalVolume)) {
             rollbackCreated(level, created);
             return ActionResultType.FAIL;
         }

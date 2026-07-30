@@ -59,6 +59,12 @@ public final class LittleSelectionRenderer {
                 workingGrid = LittleGrid.max(((TETiles) blockEntity).getGrid(), selectedGrid);
             LittleBox point = LittlePlacementMath.cell(target, hit.getLocation(), hit.getDirection(), workingGrid, selectedGrid, inward);
             bounds = LittleToolSelection.getPreviewBounds(held, target, point, workingGrid, selectedGrid);
+        } else if (result != null && held.getItem() instanceof ItemLittleChisel) {
+            Vector3d location = result.getLocation();
+            BlockPos target = new BlockPos(location.x, location.y, location.z);
+            LittleGrid grid = LittleToolGrid.get(held);
+            LittleBox point = LittlePlacementMath.cell(target, location, grid, grid);
+            bounds = LittleToolSelection.getPreviewBounds(held, target, point, grid, grid);
         }
         if (bounds == null)
             bounds = LittleToolSelection.getStartBounds(held);

@@ -25,6 +25,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import team.creative.littletiles.LittleTiles;
 import team.creative.littletiles.common.block.TETiles;
 import team.creative.littletiles.common.grid.LittleGrid;
 import team.creative.littletiles.common.item.LittleToolSelection.Area;
@@ -103,13 +104,14 @@ public class ItemLittleHammer extends Item {
         LittleBox point = LittlePlacementMath.cell(pos, hit, face, workingGrid, selectedGrid, true);
         Area area = LittleToolSelection.click(hammer, pos, point, workingGrid, selectedGrid);
         if (area == null) {
-            if (!level.isClientSide)
-                player.displayClientMessage(new StringTextComponent("LittleTiles: first corner set"), true);
-            return level.isClientSide ? ActionResultType.SUCCESS : ActionResultType.CONSUME;
-        }
-        if (level.isClientSide)
+            player.displayClientMessage(new StringTextComponent("LittleTiles: first corner set"), true);
             return ActionResultType.SUCCESS;
+        }
+        LittleTiles.NETWORK.sendToServer(new LittleToolActionPacket(LittleToolActionPacket.HAMMER, area, face));
+        return ActionResultType.SUCCESS;
+    }
 
+    public static ActionResultType applyArea(World level, PlayerEntity player, ItemStack hammer, Area area, Direction face) {
         List<Removal> removals = new ArrayList<>();
         Map<BlockPos, TETiles> affected = new LinkedHashMap<>();
         for (Map.Entry<BlockPos, LittleBox> entry : area.split().entrySet()) {

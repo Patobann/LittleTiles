@@ -27,8 +27,10 @@ public final class LittleToolEventHandler {
             if (blockTrace.getBlockPos().equals(event.getPos()))
                 hit = blockTrace.getLocation();
         }
-        if (!event.getWorld().isClientSide)
+        if (!event.getWorld().isClientSide) {
             event.setCanceled(true);
+            return;
+        }
         ItemLittleHammer.click(event.getWorld(), event.getPlayer(), stack, event.getPos(), event.getFace(), hit);
     }
 }
