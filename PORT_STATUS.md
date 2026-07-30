@@ -6,7 +6,7 @@ The complete 1.12.2 source tree is intentionally preserved as the functional
 reference. The unfinished 1.16 source tree is enabled package-by-package so a
 broken subsystem cannot hide the state of the working runtime.
 
-## Current milestone: persistent tile foundation
+## Current milestone: original-style box editing foundation
 
 Verified on Java 8 (Temurin 8u492):
 
@@ -19,9 +19,10 @@ Verified on Java 8 (Temurin 8u492):
 - The runtime log contains `LittleTiles 1.16.5 port bootstrap loaded`.
 - Grid, vector, box, element, tile, and tile-collection cores compile as active
   1.16 code.
-- Twenty-one focused tests cover grid/vector coordinates plus box splitting,
-  combining, clipping, ray tracing, volume accounting, face coverage, and
-  current/legacy NBT.
+- Twenty-nine focused tests cover grid/vector coordinates, box splitting and
+  combining, clipping, ray tracing, volume accounting, face coverage, current/legacy
+  NBT, tool-grid alignment, inclusive two-point selection, and positive/negative
+  multi-block area splitting.
 - The Forge runtime smoke-test verifies full `BlockState` properties, element/tile/
   collection NBT, box combination, registry creation, grid conversion, and block
   entity persistence, half-block voxel shape generation, and client update NBT.
@@ -36,12 +37,19 @@ models, full placement modes,
 packets, screens, and most tools are not restored yet. The first chisel
 interaction converts a safe
 vanilla block into a full-size little tile while preserving its `BlockState`.
-The hammer removes one grid cell without damaging the remaining boxes. In survival,
-it atomically stores the exact fractional `BlockState` volume in the original-style
-24-slot ingredient bag. The chisel remembers or sneak-samples a little tile material and places single
-cells back into cavities or adjacent air, atomically consuming bag volume.
-Tile-dependent collision is marked dynamic so sparse microblocks do not retain
-an invisible full-block collision shape.
+The chisel now follows the original two-point right-click contract: the first click
+fixes a corner, the live world overlay follows the cursor, and the second click applies
+the inclusive area. Its original-style `fill` behavior subtracts occupied tile volume
+and places every free fragment across block boundaries. The hammer uses the original
+left-click two-point contract and removes every material intersecting the split area.
+Survival bag changes are staged before either tool mutates the world. Tool selection
+is cancelled on deselect or secondary-mode use. Tile-dependent collision is dynamic,
+so sparse microblocks do not retain an invisible full-block collision shape.
+
+The multi-block selection math and Forge event wiring compile and pass tests. The
+right-click chisel build has reached an integrated world without LittleTiles exceptions;
+the latest left-click hammer event adaptation still requires the next client restart and
+manual interaction smoke-test before it is marked runtime-verified.
 
 ## Source policy
 
@@ -74,8 +82,8 @@ gradlew runData
 | 1 | Grid and math primitives (`LittleGrid`, vectors, boxes) | In progress: base boxes working; transformable boxes and face adapters next |
 | 2 | Little block/material registry and tile serialization | Working for base boxes: state, color, multi-box tile, collection NBT |
 | 3 | LittleTiles block entity, NBT save/load, block registration | In progress: block/item/type registered and persistent; world behavior next |
-| 4 | Placement, removal, collision, selection, networking | In progress: one-cell survival placement/removal, dynamic tile-derived shapes, and vanilla sync working |
-| 5 | Client rendering and basic tools | In progress: layered UV-correct BlockState cuboids, biome/ARGB tint, vanilla flat lighting, and full-face culling render; chisel/hammer edit one cell |
+| 4 | Placement, removal, collision, selection, networking | In progress: original-style two-point multi-block fill/removal, dynamic shapes, staged bag updates, and vanilla sync working; custom action packets and undo next |
+| 5 | Client rendering and basic tools | In progress: layered UV-correct BlockState cuboids, biome/ARGB tint, flat lighting, face culling, world selection overlay, RMB chisel and LMB hammer |
 | 6 | Blueprints, GUI, undo/redo | Not started |
 | 7 | Structures, doors, animations, lifts | Not started |
 | 8 | Signals, multiplayer hardening, integrations, optimization | Not started |

@@ -1,6 +1,10 @@
 package team.creative.littletiles.common.math;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -44,12 +48,34 @@ public class LittlePlacementMathTest {
         assertCell(LittlePlacementMath.cell(target, hit, Direction.EAST, GRID, false), 15, 8, 8);
     }
 
+    @Test
+    public void coarserSelectionAlignsInsideFinerGrid() {
+        LittleBox box = LittlePlacementMath.cell(ORIGIN, new Vector3d(0.53D, 1, 0.47D), Direction.UP, LittleGrid.get(32), GRID, true);
+        assertBox(box, 16, 30, 14, 18, 32, 16);
+    }
+
+    @Test
+    public void fillModeSubtractsOccupiedVolume() {
+        LittleBox occupied = new LittleBox(1, 1, 1, 3, 3, 3);
+        List<LittleBox> remaining = LittlePlacementMath.subtract(new LittleBox(0, 0, 0, 4, 4, 4), Arrays.asList(occupied));
+        int volume = 0;
+        for (LittleBox box : remaining) {
+            volume += box.getVolume();
+            assertFalse(LittleBox.intersectsWith(box, occupied));
+        }
+        assertEquals(56, volume);
+    }
+
     private static void assertCell(LittleBox box, int x, int y, int z) {
-        assertEquals(x, box.minX);
-        assertEquals(y, box.minY);
-        assertEquals(z, box.minZ);
-        assertEquals(x + 1, box.maxX);
-        assertEquals(y + 1, box.maxY);
-        assertEquals(z + 1, box.maxZ);
+        assertBox(box, x, y, z, x + 1, y + 1, z + 1);
+    }
+
+    private static void assertBox(LittleBox box, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+        assertEquals(minX, box.minX);
+        assertEquals(minY, box.minY);
+        assertEquals(minZ, box.minZ);
+        assertEquals(maxX, box.maxX);
+        assertEquals(maxY, box.maxY);
+        assertEquals(maxZ, box.maxZ);
     }
 }

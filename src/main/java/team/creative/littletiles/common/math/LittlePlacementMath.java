@@ -1,5 +1,8 @@
 package team.creative.littletiles.common.math;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -23,11 +26,41 @@ public final class LittlePlacementMath {
     }
 
     public static LittleBox cell(BlockPos targetPos, Vector3d hit, Direction face, LittleGrid grid, boolean inward) {
+        return cell(targetPos, hit, face, grid, grid, inward);
+    }
+
+    public static LittleBox cell(BlockPos targetPos, Vector3d hit, Direction face, LittleGrid grid, LittleGrid selectedGrid, boolean inward) {
+        if (grid.count < selectedGrid.count || grid.count % selectedGrid.count != 0)
+            throw new IllegalArgumentException("Selected grid " + selectedGrid.count + " does not fit working grid " + grid.count);
         double direction = inward ? -EPSILON : EPSILON;
-        int x = coordinate(hit.x - targetPos.getX() + face.getStepX() * direction, grid);
-        int y = coordinate(hit.y - targetPos.getY() + face.getStepY() * direction, grid);
-        int z = coordinate(hit.z - targetPos.getZ() + face.getStepZ() * direction, grid);
-        return new LittleBox(x, y, z, x + 1, y + 1, z + 1);
+        int size = grid.count / selectedGrid.count;
+        int x = align(coordinate(hit.x - targetPos.getX() + face.getStepX() * direction, grid), size);
+        int y = align(coordinate(hit.y - targetPos.getY() + face.getStepY() * direction, grid), size);
+        int z = align(coordinate(hit.z - targetPos.getZ() + face.getStepZ() * direction, grid), size);
+        return new LittleBox(x, y, z, x + size, y + size, z + size);
+    }
+
+    private static int align(int coordinate, int size) {
+        return coordinate / size * size;
+    }
+
+    public static List<LittleBox> subtract(LittleBox area, Iterable<LittleBox> occupied) {
+        List<LittleBox> remaining = new ArrayList<>();
+        remaining.add(area.copy());
+        for (LittleBox obstacle : occupied) {
+            List<LittleBox> next = new ArrayList<>();
+            for (LittleBox candidate : remaining) {
+                List<LittleBox> cut = candidate.cutOut(obstacle, null);
+                if (cut == null)
+                    next.add(candidate);
+                else
+                    next.addAll(cut);
+            }
+            remaining = next;
+            if (remaining.isEmpty())
+                break;
+        }
+        return remaining;
     }
 
     private static int coordinate(double value, LittleGrid grid) {
