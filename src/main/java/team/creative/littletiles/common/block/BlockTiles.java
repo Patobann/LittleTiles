@@ -30,7 +30,7 @@ import team.creative.littletiles.common.tile.LittleTile;
 public class BlockTiles extends Block {
 
     public BlockTiles() {
-        super(AbstractBlock.Properties.of(Material.STONE).strength(1.5F, 6.0F).noOcclusion());
+        super(AbstractBlock.Properties.of(Material.STONE).strength(1.5F, 6.0F).noOcclusion().dynamicShape());
     }
 
     @Override
@@ -93,7 +93,7 @@ public class BlockTiles extends Block {
     public VoxelShape getCollisionShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
         TETiles tiles = getTiles(world, pos);
         if (tiles == null)
-            return VoxelShapes.block();
+            return VoxelShapes.empty();
         return createShape(tiles.getGrid(), tiles.getTiles());
     }
 

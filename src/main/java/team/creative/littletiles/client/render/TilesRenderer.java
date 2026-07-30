@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -59,21 +60,44 @@ public class TilesRenderer extends TileEntityRenderer<TETiles> {
         for (Direction face : Direction.values()) {
             if (LittleFaceCulling.isCovered(box, face, blockEntity.getTiles()))
                 continue;
-            FaceData data = faceData(model, state, face);
-            int color = data.tintIndex >= 0 && blockEntity.getLevel() != null
-                    ? Minecraft.getInstance().getBlockColors().getColor(state, blockEntity.getLevel(), blockEntity.getBlockPos(), data.tintIndex)
-                    : 0xFFFFFF;
-            if (color == -1)
-                color = 0xFFFFFF;
-            float shade = shade(face);
-            int red = (int) ((color >> 16 & 255) * shade);
-            int green = (int) ((color >> 8 & 255) * shade);
-            int blue = (int) ((color & 255) * shade);
-            renderFace(builder, matrix, face, data.sprite, minX, minY, minZ, maxX, maxY, maxZ, red, green, blue, packedLight, packedOverlay);
+            int faceLight = packedLight;
+            if (blockEntity.getLevel() != null && isOuterFace(box, face, grid))
+                faceLight = WorldRenderer.getLightColor(blockEntity.getLevel(), state, blockEntity.getBlockPos().relative(face));
+            for (FaceData data : faceData(model, state, face)) {
+                float shade = blockEntity.getLevel() != null ? blockEntity.getLevel().getShade(face, data.shade) : shade(face);
+                int color = data.tintIndex >= 0 && blockEntity.getLevel() != null
+                        ? Minecraft.getInstance().getBlockColors().getColor(state, blockEntity.getLevel(), blockEntity.getBlockPos(), data.tintIndex)
+                        : 0xFFFFFF;
+                if (color == -1)
+                    color = 0xFFFFFF;
+                int red = (int) ((color >> 16 & 255) * shade);
+                int green = (int) ((color >> 8 & 255) * shade);
+                int blue = (int) ((color & 255) * shade);
+                renderFace(builder, matrix, face, data.sprite, minX, minY, minZ, maxX, maxY, maxZ, red, green, blue, faceLight, packedOverlay);
+            }
         }
     }
 
-    private static FaceData faceData(IBakedModel model, BlockState state, Direction face) {
+    static boolean isOuterFace(LittleBox box, Direction face, LittleGrid grid) {
+        switch (face) {
+        case DOWN:
+            return box.minY == 0;
+        case UP:
+            return box.maxY == grid.count;
+        case NORTH:
+            return box.minZ == 0;
+        case SOUTH:
+            return box.maxZ == grid.count;
+        case WEST:
+            return box.minX == 0;
+        case EAST:
+            return box.maxX == grid.count;
+        default:
+            return false;
+        }
+    }
+
+    private static List<FaceData> faceData(IBakedModel model, BlockState state, Direction face) {
         Random random = new Random(42L);
         List<BakedQuad> quads = new ArrayList<>(model.getQuads(state, face, random));
         if (quads.isEmpty()) {
@@ -82,10 +106,12 @@ public class TilesRenderer extends TileEntityRenderer<TETiles> {
                 if (quad.getDirection() == face)
                     quads.add(quad);
         }
-        if (quads.isEmpty())
-            return new FaceData(model.getParticleIcon(), -1);
-        BakedQuad quad = quads.get(0);
-        return new FaceData(quad.getSprite(), quad.isTinted() ? quad.getTintIndex() : -1);
+        List<FaceData> data = new ArrayList<>(Math.max(1, quads.size()));
+        for (BakedQuad quad : quads)
+            data.add(new FaceData(quad.getSprite(), quad.isTinted() ? quad.getTintIndex() : -1, quad.isShade()));
+        if (data.isEmpty())
+            data.add(new FaceData(model.getParticleIcon(), -1, true));
+        return data;
     }
 
     private static float shade(Direction face) {
@@ -154,10 +180,12 @@ public class TilesRenderer extends TileEntityRenderer<TETiles> {
     private static class FaceData {
         final TextureAtlasSprite sprite;
         final int tintIndex;
+        final boolean shade;
 
-        FaceData(TextureAtlasSprite sprite, int tintIndex) {
+        FaceData(TextureAtlasSprite sprite, int tintIndex, boolean shade) {
             this.sprite = sprite;
             this.tintIndex = tintIndex;
+            this.shade = shade;
         }
     }
 }

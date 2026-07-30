@@ -38,6 +38,7 @@ public class ItemLittleChisel extends Item {
     public void appendHoverText(ItemStack stack, @Nullable World level, List<ITextComponent> tooltip, ITooltipFlag flag) {
         String selected = stack.hasTag() ? stack.getTag().getString(SELECTED_STATE) : "";
         tooltip.add(new StringTextComponent(selected.isEmpty() ? "Material: convert a block first" : "Material: " + selected));
+        tooltip.add(new StringTextComponent("Sneak-use a little tile to sample its material"));
     }
     @Override
     public ActionResultType useOn(ItemUseContext context) {
@@ -70,8 +71,22 @@ public class ItemLittleChisel extends Item {
         return ActionResultType.CONSUME;
     }
 
+    private static ActionResultType selectMaterial(ItemUseContext context, TETiles clickedTiles, ItemStack chisel) {
+        LittleBox cell = LittlePlacementMath.cell(context.getClickedPos(), context.getClickLocation(), context.getClickedFace(), clickedTiles.getGrid(), true);
+        for (LittleTile tile : clickedTiles.getTiles()) {
+            if (!tile.intersectsWith(cell))
+                continue;
+            if (!context.getLevel().isClientSide)
+                chisel.getOrCreateTag().putString(SELECTED_STATE, LittleBlockRegistry.saveState(tile.getState()));
+            return context.getLevel().isClientSide ? ActionResultType.SUCCESS : ActionResultType.CONSUME;
+        }
+        return ActionResultType.PASS;
+    }
+
     private static ActionResultType placeCell(ItemUseContext context, TETiles clickedTiles) {
         ItemStack chisel = context.getItemInHand();
+        if (context.getPlayer().isShiftKeyDown())
+            return selectMaterial(context, clickedTiles, chisel);
         if (!chisel.hasTag() || !chisel.getTag().contains(SELECTED_STATE, 8))
             return ActionResultType.FAIL;
         BlockState selected = LittleBlockRegistry.loadState(chisel.getTag().getString(SELECTED_STATE));

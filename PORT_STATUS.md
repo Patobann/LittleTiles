@@ -28,17 +28,20 @@ Verified on Java 8 (Temurin 8u492):
 
 The `littletiles:tiles` block, item, and block entity are registered and have
 minimal item models, language entries, and a loot table. A client block-entity
-renderer draws each base `LittleBox` as direct cuboid faces with its stored
-vanilla `BlockState`, absolute per-face UV coordinates, ARGB tint, and culling
-when adjacent boxes fully cover a face.
-Partial face clipping, complex non-cube block models, full placement modes,
+renderer draws each base `LittleBox` as direct cuboid faces with all baked
+`BlockState` texture layers, absolute per-face UV coordinates, biome/ARGB tint,
+state-aware vanilla flat lighting, and full-face culling.
+Per-vertex ambient occlusion, partial face clipping, complex non-cube block
+models, full placement modes,
 packets, screens, and most tools are not restored yet. The first chisel
 interaction converts a safe
 vanilla block into a full-size little tile while preserving its `BlockState`.
 The hammer removes one grid cell without damaging the remaining boxes. In survival,
 it atomically stores the exact fractional `BlockState` volume in the original-style
-24-slot ingredient bag. The chisel remembers a converted block material and places
-single cells back into cavities or adjacent air, atomically consuming bag volume.
+24-slot ingredient bag. The chisel remembers or sneak-samples a little tile material and places single
+cells back into cavities or adjacent air, atomically consuming bag volume.
+Tile-dependent collision is marked dynamic so sparse microblocks do not retain
+an invisible full-block collision shape.
 
 ## Source policy
 
@@ -71,8 +74,8 @@ gradlew runData
 | 1 | Grid and math primitives (`LittleGrid`, vectors, boxes) | In progress: base boxes working; transformable boxes and face adapters next |
 | 2 | Little block/material registry and tile serialization | Working for base boxes: state, color, multi-box tile, collection NBT |
 | 3 | LittleTiles block entity, NBT save/load, block registration | In progress: block/item/type registered and persistent; world behavior next |
-| 4 | Placement, removal, collision, selection, networking | In progress: one-cell survival placement/removal, tile-derived shapes, and vanilla sync working |
-| 5 | Client rendering and basic tools | In progress: UV-correct BlockState cuboids, ARGB tint, and full-face culling render; chisel/hammer edit one cell |
+| 4 | Placement, removal, collision, selection, networking | In progress: one-cell survival placement/removal, dynamic tile-derived shapes, and vanilla sync working |
+| 5 | Client rendering and basic tools | In progress: layered UV-correct BlockState cuboids, biome/ARGB tint, vanilla flat lighting, and full-face culling render; chisel/hammer edit one cell |
 | 6 | Blueprints, GUI, undo/redo | Not started |
 | 7 | Structures, doors, animations, lifts | Not started |
 | 8 | Signals, multiplayer hardening, integrations, optimization | Not started |
