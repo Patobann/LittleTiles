@@ -22,8 +22,17 @@ public final class LittleToolGrid {
     public static LittleGrid cycle(ItemStack stack) {
         LittleToolSelection.clear(stack);
         LittleGrid next = next(get(stack));
-        stack.getOrCreateTag().putInt(GRID, next.count);
+        set(stack, next);
         return next;
+    }
+
+    public static void set(ItemStack stack, LittleGrid grid) {
+        if (grid == LittleGrid.overallDefault()) {
+            if (stack.hasTag())
+                stack.getTag().remove(GRID);
+        } else {
+            stack.getOrCreateTag().putInt(GRID, grid.count);
+        }
     }
 
     static LittleGrid next(LittleGrid current) {

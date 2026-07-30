@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.item.BlockItem;
@@ -27,14 +28,19 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.fml.RegistryObject;
 import team.creative.creativecore.common.network.CreativeNetwork;
+import team.creative.creativecore.common.gui.GuiLayer;
+import team.creative.creativecore.common.gui.handler.GuiContainerHandler;
+import team.creative.creativecore.common.gui.handler.GuiContainerHandler.GuiHandlerPlayer;
 import team.creative.littletiles.common.block.BlockTiles;
 import team.creative.littletiles.common.block.LittleBlockRegistry;
 import team.creative.littletiles.common.block.TETiles;
 import team.creative.littletiles.common.grid.LittleGrid;
+import team.creative.littletiles.common.gui.LittleToolConfigGui;
 import team.creative.littletiles.common.item.ItemLittleChisel;
 import team.creative.littletiles.common.item.ItemLittleHammer;
 import team.creative.littletiles.common.item.ItemLittleBag;
 import team.creative.littletiles.common.item.LittleToolActionPacket;
+import team.creative.littletiles.common.item.LittleToolConfigPacket;
 import team.creative.littletiles.common.math.box.LittleBox;
 import team.creative.littletiles.common.tile.LittleCollection;
 import team.creative.littletiles.common.tile.LittleElement;
@@ -69,6 +75,13 @@ public class LittleTiles {
         ITEMS.register(modBus);
         TILE_ENTITIES.register(modBus);
         NETWORK.registerType(LittleToolActionPacket.class);
+        NETWORK.registerType(LittleToolConfigPacket.class);
+        GuiContainerHandler.registerGuiHandler("littletiles_tool", new GuiHandlerPlayer() {
+            @Override
+            public GuiLayer create(PlayerEntity player) {
+                return new LittleToolConfigGui(player);
+            }
+        });
         modBus.addListener(this::commonSetup);
         modBus.addListener(this::gatherData);
 

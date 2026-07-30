@@ -7,10 +7,12 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent.ClickInputEvent;
+import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickEmpty;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import team.creative.creativecore.common.gui.handler.GuiContainerHandler;
 import team.creative.littletiles.LittleTiles;
 import team.creative.littletiles.common.item.ItemLittleChisel;
 import team.creative.littletiles.common.item.ItemLittleHammer;
@@ -22,6 +24,16 @@ public final class LittleToolClientEventHandler {
     private static boolean hammerAttackHeld;
 
     private LittleToolClientEventHandler() {}
+
+    @SubscribeEvent
+    public static void keyInput(KeyInputEvent event) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.player == null || minecraft.screen != null || !LittleTilesClient.CONFIGURE.consumeClick())
+            return;
+        ItemStack held = minecraft.player.getMainHandItem();
+        if (held.getItem() instanceof ItemLittleChisel || held.getItem() instanceof ItemLittleHammer)
+            GuiContainerHandler.openGui(minecraft.player, "littletiles_tool");
+    }
 
     @SubscribeEvent
     public static void clickInput(ClickInputEvent event) {

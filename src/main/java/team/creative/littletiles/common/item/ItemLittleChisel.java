@@ -51,10 +51,12 @@ public class ItemLittleChisel extends Item {
     public void appendHoverText(ItemStack stack, @Nullable World level, List<ITextComponent> tooltip, ITooltipFlag flag) {
         LittleGrid grid = LittleToolGrid.get(stack);
         tooltip.add(new StringTextComponent("Grid: " + grid.count + "x" + grid.count + "x" + grid.count));
+        tooltip.add(new StringTextComponent("Placement: " + LittlePlacementMode.get(stack).name().toLowerCase()));
         String selected = stack.hasTag() ? stack.getTag().getString(SELECTED_STATE) : "";
         tooltip.add(new StringTextComponent(selected.isEmpty() ? "Material: convert a block first" : "Material: " + selected));
         tooltip.add(new StringTextComponent("Right-click two corners to apply an area"));
         tooltip.add(new StringTextComponent("Sneak-use a little tile to sample its material"));
+        tooltip.add(new StringTextComponent("Press C to configure"));
     }
 
     @Override
@@ -181,6 +183,7 @@ public class ItemLittleChisel extends Item {
         if (selected.isAir())
             return ActionResultType.FAIL;
 
+        LittlePlacementMode mode = LittlePlacementMode.get(chisel);
         List<Placement> placements = new ArrayList<>();
         double totalVolume = 0;
         for (Map.Entry<BlockPos, LittleBox> entry : area.split().entrySet()) {
@@ -189,8 +192,11 @@ public class ItemLittleChisel extends Item {
                 return ActionResultType.FAIL;
             TileEntity blockEntity = level.getBlockEntity(pos);
             TETiles tiles = blockEntity instanceof TETiles ? (TETiles) blockEntity : null;
-            if (tiles == null && !level.getBlockState(pos).isAir())
+            if (tiles == null && !level.getBlockState(pos).isAir()) {
+                if (mode == LittlePlacementMode.NORMAL)
+                    return ActionResultType.FAIL;
                 continue;
+            }
 
             LittleGrid grid = tiles == null ? area.grid : LittleGrid.max(tiles.getGrid(), area.grid);
             LittleBox localArea = LittleToolSelection.scale(entry.getValue(), area.grid, grid);
@@ -202,7 +208,14 @@ public class ItemLittleChisel extends Item {
                 for (LittleTile tile : tiles.getTiles())
                     for (LittleBox box : tile)
                         occupied.add(LittleToolSelection.scale(box, tiles.getGrid(), grid));
-                free.addAll(LittlePlacementMath.subtract(localArea, occupied));
+                if (mode == LittlePlacementMode.NORMAL) {
+                    for (LittleBox box : occupied)
+                        if (LittleBox.intersectsWith(localArea, box))
+                            return ActionResultType.FAIL;
+                    free.add(localArea);
+                } else {
+                    free.addAll(LittlePlacementMath.subtract(localArea, occupied));
+                }
             }
             if (free.isEmpty())
                 continue;

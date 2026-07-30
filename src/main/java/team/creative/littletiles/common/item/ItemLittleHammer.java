@@ -25,6 +25,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import team.creative.creativecore.common.gui.handler.GuiContainerHandler;
 import team.creative.littletiles.LittleTiles;
 import team.creative.littletiles.common.block.TETiles;
 import team.creative.littletiles.common.grid.LittleGrid;
@@ -50,13 +51,17 @@ public class ItemLittleHammer extends Item {
         LittleGrid grid = LittleToolGrid.get(stack);
         tooltip.add(new StringTextComponent("Grid: " + grid.count + "x" + grid.count + "x" + grid.count));
         tooltip.add(new StringTextComponent("Left-click two corners to remove an area"));
+        tooltip.add(new StringTextComponent("Right-click or press C to configure"));
     }
 
     @Override
     public ActionResult<ItemStack> use(World level, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!player.isShiftKeyDown())
-            return ActionResult.pass(stack);
+        if (!player.isShiftKeyDown()) {
+            if (!level.isClientSide)
+                GuiContainerHandler.openGui(player, "littletiles_tool");
+            return ActionResult.sidedSuccess(stack, level.isClientSide);
+        }
         if (LittleToolSelection.has(stack)) {
             LittleToolSelection.clear(stack);
             if (!level.isClientSide)
